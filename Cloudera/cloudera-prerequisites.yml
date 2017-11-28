@@ -1,6 +1,6 @@
 ---
 - name: Install Cloudera prerequisites with Ansible
-  hosts: cloudera.managed.hosts
+  hosts: ClouderaManagedHosts
   user: remote_user
   become: yes
   become_method: sudo 
