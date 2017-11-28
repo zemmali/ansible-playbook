@@ -1,0 +1,15 @@
+[bigips]
+bigips.host
+
+[bigips:vars]
+ansible_user=root
+ansible_ssh_pass=********
+ui_uname=admin
+ui_pass=**********
+
+[webservers]
+y.y.y.y
+
+[webservers:vars]
+ansible_user=root
+ansible_ssh_pass=**********

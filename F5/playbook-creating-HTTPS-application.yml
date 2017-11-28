@@ -1,0 +1,58 @@
+- name: creating HTTPS application
+  hosts: bigips
+  
+  tasks: 
+    - name: Create a HTTP node
+      bigip_node:
+        server: "{{ inventory_hostname }}"
+        user: "admin"
+        password: "admin"
+        host: "@IP-Node"
+        name: "http_node"
+        validate_certs: "no"
+        delegate_to: localhost
+        
+    - name: Create a web-pool
+      bigip_pool:
+        server: "{{ inventory_hostname }}"
+        user: "admin"
+        password: "admin"
+        lb_method: "ratio_member"
+        monitors: http
+        name: "web-pool"
+        validate_certs: "no"
+        delegate_to: localhost
+        
+    - name: Add http node to web-pool
+      bigip_pool_member:
+        description: "HTTP Webserver-1"
+        host: "{{ item.host }}"
+        name: "{{ item.name }}"
+        user: "admin"
+        password: "admin"
+        pool: "web-pool"
+        port: "80"
+        server: "{{ inventory_hostname }}"
+        validate_certs: "no"
+        
+      with_items:
+        - host: "@IP-Node"
+          name: "http_node"
+      delegate_to: localhost
+      
+    - name: Create a virtual server
+      bigip_virtual_server:
+        description: "Secure web application"
+        server: "{{ inventory_hostname }}"
+        user: "admin"
+        password: "admin"
+        name: "htttp_vs"
+        destination: "@IP-VS"
+        port: 443
+        snat: "Automap"
+        all_profiles:
+           - http
+           - clientssl
+        pool: "web-pool"
+        validate_certs: "no"
+      delegate_to: localhost
