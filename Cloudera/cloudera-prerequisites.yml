@@ -1,0 +1,49 @@
+---
+- name: Install Cloudera prerequisites with Ansible
+  hosts: cloudera.managed.hosts
+  user: remote_user
+  become: yes
+  become_method: sudo 
+  become_user: root
+  tasks:
+  # Define Task 1 
+    - name: Disable selinux
+      selinux: 
+        state: disabled
+  
+  # Define Task 2
+    - name: Disable IPv6
+      sysctl: 
+        name: net.ipv6.conf.all.disable_ipv6 
+        value: 1 
+        state: present
+
+  # Define Task 3        
+    - name: Disable default IPv6         
+      sysctl: 
+        name: net.ipv6.conf.default.disable_ipv6 
+        value: 1 
+        state: present
+
+  # Define Task 4
+    - name:  SET vm.swappiness kernel value less or equal to 10
+      sysctl: 
+        name: vm.swappiness 
+        value: 10 
+        state: present
+
+  # Define Task 5 
+    - name: lookup authorized_key
+      authorized_key: 
+          user: root 
+          key: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
+
+  # Define Task 6  
+    - name: Copy /etc/hosts
+      copy: 
+          src: /etc/hosts 
+          dest: /etc/hosts 
+          owner: root 
+          group: root 
+          mode: 0644
+...
