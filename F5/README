@@ -1,0 +1,15 @@
+F5 AUTOMATION AND ORCHESTRATION
+
+Ansible’s simple network automation framework includes native support for both legacy and open network devices. This framework separates the Ansible Playbook from the Ansible engine, allowing your Ansible automations to span your entire network stack - network switches, appliances, etc.
+
+F5 users can automate and orchestrate using Ansible through a series of integrations with the F5 BIG-IP API-called modules. These modules leverage the full API support implemented on F5 BIG-IP hardware and virtual platforms.
+
+Ansible F5 modules enable most common use cases, such as:
+
+	- Automating the initial configurations on the BIG-IP like DNS, NTP etc.
+
+	- Automation to Network the BIG-IP (VLANS, Self-Ips)
+
+	- Automated deployment of HTTP and HTTPS applications
+
+	- Managing Virtual-Servers, Pools, Monitors and other configuration objects
