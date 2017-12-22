@@ -1,0 +1,69 @@
+---
+# Install configure and start beats
+- name: Install configure and start ELK Stack
+  hosts: elkserver
+  tasks:
+  - name: install the ELK Stack packages
+    yum:
+      name: 
+      - elasticsearch
+      - kibana
+      - logstash
+      state: present
+
+  # Start and Enable elasticsearch, kIBANA, logstash
+  - name: Start and Enable elasticsearch, kIBANA, logstash
+    service:
+      name: {{ item }}
+      state: started
+      enabled: yes  
+    with_items:
+      - elasticsearch
+      - kibana
+      - logstash
+      
+  # Start and Enable elasticsearch, kIBANA, logstash
+  - name: Enable port elasticsearch, kIBANA and logstash on FirewallD      
+    firewalld:
+      port: {{ item }}
+      permanent: true
+      state: enabled
+    with_items:
+      - 5601/tcp
+      - 9200/tcp
+      - 5044/tcp
+      - 5044/udp
+     
+####### Install configure and start beats
+- name: Install configure and start beats
+  hosts: beats
+  tasks:
+  - name: install the packetbeat, filebeat, metricbeat and auditbeat packages
+    yum:
+      name: {{ item }}
+      state: present
+    with_items:
+      - https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-6.0.0-x86_64.rpm
+      - https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-6.0.0-x86_64.rpm
+      - https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-6.0.0-x86_64.rpm
+      - https://artifacts.elastic.co/downloads/beats/auditbeat/auditbeat-6.0.0-x86_64.rpm   
+
+  # Start and Enable packetbeat, filebeat, metricbeat and auditbeat
+  - name: Start and Enable packetbeat, filebeat, metricbeat and auditbeat
+    service:
+      name: {{ item }}
+      state: started
+      enabled: yes  
+    with_items:
+      - packetbeat
+      - filebeat
+      - metricbeat 
+      - auditbeat
+
+  - name: Copy file packetbeat to Beats
+    copy:
+      src: template/packetbeat.yml
+      dest: /etc/packetbeat/packetbeat.yml
+      owner: root
+      group: root
+      mode: 0644
