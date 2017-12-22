@@ -1,0 +1,114 @@
+---
+####### Install configure and start beats
+#########################################
+- name: Install configure and start ELK Stack
+  hosts: elkserver
+  tasks:
+  - name: install the ELK Stack packages
+    yum:
+      name: 
+      - elasticsearch
+      - kibana
+      - logstash
+      - filebeat
+      state: present
+
+  - name: Start and Enable elasticsearch
+    service:
+      name: elasticsearch
+      state: started
+      enabled: yes  
+
+
+  - name: Start and Enable kIBANA
+    service:
+      name: kibana
+      state: started
+      enabled: yes  
+       
+  - name: Start and Enable logstash
+    service:
+      name: logstash
+      state: started
+      enabled: yes
+      
+  - name: Start and Enable filebeat
+    service:
+      name: filebeat
+      state: started
+      enabled: yes  
+
+  - name: Enable port elasticsearch on FirewallD      
+    firewalld:
+      port: 9200/tcp
+      permanent: true
+      state: enabled
+     
+  - name: Enable port kibana on FirewallD      
+    firewalld:
+      port: 5601/tcp
+      permanent: true
+      state: enabled
+      
+  - name: Enable port Logstash on FirewallD      
+    firewalld:
+      port: 5044/tcp
+      permanent: true
+      state: enabled   
+
+####### Install configure and start beats
+#########################################
+- name: Install configure and start beats
+  hosts: beats
+  tasks:
+  - name: install the packetbeat packages
+    yum:
+      name: https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-6.0.0-x86_64.rpm
+      state: present
+
+  - name: Start and Enable packetbeat
+    service:
+      name: packetbeat
+      state: started
+      enabled: yes      
+
+  - name: install the filebeat packages
+    yum:
+      name: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-6.0.0-x86_64.rpm
+      state: present
+
+  - name: Start and Enable filebeat
+    service:
+      name: filebeat
+      state: started
+      enabled: yes 
+
+  - name: install the metricbeat packages
+    yum:
+      name: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-6.0.0-x86_64.rpm
+      state: present
+
+  - name: Start and Enable metricbeat
+    service:
+      name: metricbeat
+      state: started
+      enabled: yes 
+
+  - name: install the auditbeat packages
+    yum:
+      name:  https://artifacts.elastic.co/downloads/beats/auditbeat/auditbeat-6.0.0-x86_64.rpm
+      state: present
+
+  - name: Start and Enable auditbeat
+    service:
+      name: auditbeat
+      state: started
+      enabled: yes       
+
+  - name: Copy file packetbeat to Beats
+    copy:
+      src: template/packetbeat.yml
+      dest: /etc/packetbeat/packetbeat.yml
+      owner: root
+      group: root
+      mode: 0644
