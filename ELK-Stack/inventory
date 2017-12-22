@@ -1,0 +1,6 @@
+[elkserver]
+@ip_server
+
+[beats]
+@ip_client1
+@ip_client2
